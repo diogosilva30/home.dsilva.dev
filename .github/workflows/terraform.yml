@@ -80,3 +80,6 @@ jobs:
           TF_VAR_proxmox_api_url: ${{ secrets.PROXMOX_API_URL }}
           TF_VAR_proxmox_api_token_id: ${{ secrets.PROXMOX_API_TOKEN }}
           TF_VAR_proxmox_api_token_secret: ${{ secrets.PROXMOX_API_TOKEN_SECRET }}
+          TF_VAR_ciuser: ${{ secrets.CI_USER }}
+          TF_VAR_ipconfig0: ${{ secrets.IPCONFIG0 }}
+          TF_VAR_ssh_keys: ${{ secrets.SSH_KEY }}

@@ -18,12 +18,7 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
-        with:
-          extra-args: |
-            -var 'proxmox_api_url=${{ secrets.PROXMOX_API_URL }}'
-            -var 'proxmox_api_token_id=${{ secrets.PROXMOX_API_TOKEN }}'
-            -var 'proxmox_api_token_secret=${{ secrets.PROXMOX_API_TOKEN_SECRET }}'
-
+        
       - name: Terraform Format
         id: fmt
         run: terraform fmt -check
@@ -81,3 +76,7 @@ jobs:
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
+        env:
+          TF_VAR_proxmox_api_url: ${{ secrets.PROXMOX_API_URL }}
+          TF_VAR_proxmox_api_token_id: ${{ secrets.PROXMOX_API_TOKEN }}
+          TF_VAR_proxmox_api_token_secret: ${{ secrets.PROXMOX_API_TOKEN_SECRET }}

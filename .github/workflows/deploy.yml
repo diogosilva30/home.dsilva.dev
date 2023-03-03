@@ -51,8 +51,6 @@ jobs:
       TAILSCALE_AUTH_KEY: ${{ needs.generate-tailscale-authkey.outputs.AUTH_KEY }}
       TAILSCALE_UPGRADE: "1"
     steps:
-      - name: Debug tailscale
-        run: echo ${{ needs.generate-tailscale-authkey.outputs.AUTH_KEY }}
       - name: Install tailscale
         run: curl -fsSL https://tailscale.com/install.sh | sh
       - name: Start Tailscale

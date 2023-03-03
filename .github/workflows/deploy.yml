@@ -45,31 +45,28 @@ jobs:
   # using previously created auth key
   authenticate-to-private-network:
     runs-on: ubuntu-latest
+    
+  # Now that we are connected to private network
+  # we can deploy our infrastructure with terraform
+  deploy:
+    name: "Deploy with Terraform"
     needs: generate-tailscale-authkey
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     env:
       # Get auth key from previous job
       TAILSCALE_AUTH_KEY: ${{ needs.generate-tailscale-authkey.outputs.AUTH_KEY }}
       TAILSCALE_UPGRADE: "1"
     steps:
+      # Connect to private network with tailscale
       - name: Install tailscale
         run: curl -fsSL https://tailscale.com/install.sh | sh
       - name: Start Tailscale
         run: sudo tailscale up --auth-key $TAILSCALE_AUTH_KEY
       - name: Tailscale status
         run: tailscale status
-        
-  # Now that we are connected to private network
-  # we can deploy our infrastructure with terraform
-  build-infra-with-terraform:
-    name: "Terraform infrastructure"
-    needs: authenticate-to-private-network
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-    steps:
-      - name: Debug proxmox
-        run: ping 192.168.1.200
-      # Checkout repository code
+        # Checkout repository code
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -138,5 +135,5 @@ jobs:
           TF_VAR_proxmox_api_token_id: ${{ secrets.PROXMOX_API_TOKEN_ID }}
           TF_VAR_proxmox_api_token_secret: ${{ secrets.PROXMOX_API_TOKEN_SECRET }}
           TF_VAR_ciuser: ${{ secrets.CI_USER }}
-          TF_VAR_ipconfig0: ${{ secrets.IPCONFIG0 }}
+          TF_VAR_ipconfig0: = "ip=192.168.1.45/24,gw=192.168.1.1"
           TF_VAR_ssh_keys: ${{ secrets.SSH_KEY }}

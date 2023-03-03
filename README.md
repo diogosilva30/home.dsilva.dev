@@ -1,5 +1,7 @@
 # home.dsilva.dev
 
+[![Deploy](https://github.com/diogosilva30/home.dsilva.dev/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/diogosilva30/home.dsilva.dev/actions/workflows/deploy.yml)
+
 ## 🔥🚀 Home Assistant Deployment with Docker, Terraform, Cloudflare Tunnel, and Tailscale VPN 🔥🚀
 
 Welcome to my open-source repository for my Home Assistant deployment! This project showcases my expertise in deploying Home Assistant on a self-hosted server using the latest tools and technologies.

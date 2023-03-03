@@ -26,7 +26,7 @@ jobs:
               "capabilities": {
                 "devices": {
                   "create": {
-                    "ephemeral": true, # set the key to expire after session ends
+                    "ephemeral": true,
                     "tags": ["tag:server"]
                   }
                 }

@@ -28,7 +28,7 @@ jobs:
                 "devices": {
                   "create": {
                     "ephemeral": true,
-                    "tags": ["tag:server"]
+                    "tags": ["tag:cicd"]
                   }
                 }
               },

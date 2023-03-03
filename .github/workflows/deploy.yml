@@ -36,7 +36,7 @@ jobs:
           
           # Save the auth key
           echo "AUTH_KEY=$AUTH_KEY" >> $GITHUB_OUTPUT
-          echo $GITHUB_OUTPUT
+          cat $GITHUB_OUTPUT
   
   # Authenticate tailscale against private deployment network
   # using previously created auth key

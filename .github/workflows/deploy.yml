@@ -17,9 +17,9 @@ jobs:
       - name: Generate Tailscale Auth Key
         run: |
           # Generate access token with Oauth2 client
-          ACCESS_TOKEN=$(curl -d "client_id=${CLIENT_ID}" -d "client_secret=${CLIENT_SECRET}" "https://api.tailscale.com/api/v2/oauth/token" | jq -r '.access_token')
+          ACCESS_TOKEN=$(curl -s -d "client_id=${CLIENT_ID}" -d "client_secret=${CLIENT_SECRET}" "https://api.tailscale.com/api/v2/oauth/token" | jq -r '.access_token')
           # Then create a one-off auth key via API with the access token we previously created
-          AUTH_KEY=$(curl --location 'https://api.tailscale.com/api/v2/tailnet/-/keys' \
+          AUTH_KEY=$(curl -s --location 'https://api.tailscale.com/api/v2/tailnet/-/keys' \
             --header "Authorization: Bearer ${ACCESS_TOKEN}" \
             --header "Content-Type: application/json" \
             --data '{
@@ -36,6 +36,7 @@ jobs:
           
           # Save the auth key
           echo "AUTH_KEY=$AUTH_KEY" >> $GITHUB_OUTPUT
+          echo $ACCESS_TOKEN
           echo $AUTH_KEY
   
   # Authenticate tailscale against private deployment network

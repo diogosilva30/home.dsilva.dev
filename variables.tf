@@ -29,14 +29,13 @@ variable "nameserver" {
   type        = string
   default     = "8.8.8.8"
 }
-
 variable "disk_size" {
-  description = "The disk size. E.g. '50GB'"
+  description = "The disk size. E.g. '50G'"
   type        = string
-  default     = "50GB"
+  default     = "50G"
 }
 variable "memory" {
   description = "The ammount of memory. E.g. '2048'"
-  type        = string
-  default     = "2048"
+  type        = number
+  default     = 2048
 }

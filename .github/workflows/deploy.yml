@@ -130,5 +130,5 @@ jobs:
           TF_VAR_proxmox_api_token_id: ${{ secrets.PROXMOX_API_TOKEN_ID }}
           TF_VAR_proxmox_api_token_secret: ${{ secrets.PROXMOX_API_TOKEN_SECRET }}
           TF_VAR_ciuser: ${{ secrets.CI_USER }}
-          TF_VAR_ipconfig0: = "ip=192.168.1.45/24,gw=192.168.1.1"
+          TF_VAR_ipconfig0: ip=192.168.1.45/24,gw=192.168.1.1
           TF_VAR_ssh_keys: ${{ secrets.SSH_KEY }}

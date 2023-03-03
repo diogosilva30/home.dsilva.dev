@@ -48,7 +48,7 @@ jobs:
       TAILSCALE_UPGRADE: "1"
     steps:
       - name: Authenticate to Private Network
-        uses: tailscale/setup-tailscale@v1
+        uses: tailscale/github-action@v1
         with:
           authkey: ${{ env.TAILSCALE_AUTH_KEY }}
 

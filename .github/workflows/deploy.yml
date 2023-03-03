@@ -35,7 +35,7 @@ jobs:
               | jq -r ".key")
           
           # Save the auth key
-          echo "::set-output name=auth_key::$AUTH_KEY"
+          echo "AUTH_KEY=$AUTH_KEY" >> $GITHUB_OUTPUT
   
   # Authenticate tailscale against private deployment network
   # using previously created auth key
@@ -44,7 +44,7 @@ jobs:
     needs: generate-tailscale-authkey
     env:
       # Get auth key from previous job
-      TAILSCALE_AUTH_KEY: ${{ needs.job1.outputs.auth_key  }}
+      TAILSCALE_AUTH_KEY: ${{ needs.generate-tailscale-authkey.outputs.AUTH_KEY }}
       TAILSCALE_UPGRADE: "1"
     steps:
       - name: Install tailscale

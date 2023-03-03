@@ -13,12 +13,28 @@ jobs:
     env:
       CLIENT_ID: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
       CLIENT_SECRET: ${{ secrets.TAILSCALE_OAUTH_CLIENT_SECRET }}
-      SCOPES: "authkey.write"
     steps:
       - name: Generate Tailscale Auth Key
         run: |
-          ACCESS_TOKEN=$(curl -s -u "${CLIENT_ID}:${CLIENT_SECRET}" -d "grant_type=client_credentials" -d "scope=${SCOPES}" https://login.tailscale.com/oauth2/token | jq -r '.access_token')
-          AUTH_KEY=$(curl -s -X POST -H "Authorization: Bearer ${ACCESS_TOKEN}" https://api.tailscale.com/api/v2/authkeys | jq -r '.[0].key')
+          # Generate access token with Oauth2 client
+          ACCESS_TOKEN=$(curl -d "client_id=${CLIENT_ID}" -d "client_secret=${CLIENT_SECRET}" "https://api.tailscale.com/api/v2/oauth/token" | jq -r '.access_token')
+          # Then create a one-off auth key via API with the access token we previously created
+          AUTH_KEY=$(curl --location 'https://api.tailscale.com/api/v2/tailnet/-/keys' \
+            --header 'Authorization: Bearer ${ACCESS_TOKEN}' \
+            --header 'Content-Type: application/json' \
+            --data '{
+              "capabilities": {
+                "devices": {
+                  "create": {
+                    "ephemeral": true, # set the key to expire after session ends
+                    "tags": ["tag:server"]
+                  }
+                }
+              },
+              "expirySeconds": 120}' 
+              | jq -r '.[0].key')
+          
+          # Save the auth key
           echo "::set-output name=authkey::$AUTH_KEY"
   
   # Authenticate tailscale against private deployment network
@@ -27,7 +43,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: generate-tailscale-authkey
     env:
-      TAILSCALE_AUTH_KEY: ${{ secrets.TAILSCALE_AUTH_KEY }}
+      # Get auth key from previous job
+      TAILSCALE_AUTH_KEY: ${{ needs.job1.outputs.auth_key  }}
       TAILSCALE_UPGRADE: "1"
     steps:
       - name: Authenticate to Private Network

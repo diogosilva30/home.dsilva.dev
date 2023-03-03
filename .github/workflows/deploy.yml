@@ -31,7 +31,7 @@ jobs:
                   }
                 }
               },
-              "expirySeconds": 120}' 
+              "expirySeconds": 120}' \
               | jq -r '.[0].key')
           
           # Save the auth key

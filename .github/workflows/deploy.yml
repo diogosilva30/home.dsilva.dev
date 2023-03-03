@@ -17,7 +17,6 @@ jobs:
     steps:
       - name: Generate Tailscale Auth Key
         run: |
-          sudo apt-get update && sudo apt-get install -y curl jq
           ACCESS_TOKEN=$(curl -s -u "${CLIENT_ID}:${CLIENT_SECRET}" -d "grant_type=client_credentials" -d "scope=${SCOPES}" https://login.tailscale.com/oauth2/token | jq -r '.access_token')
           AUTH_KEY=$(curl -s -X POST -H "Authorization: Bearer ${ACCESS_TOKEN}" https://api.tailscale.com/api/v2/authkeys | jq -r '.[0].key')
           echo "::set-output name=authkey::$AUTH_KEY"

@@ -41,13 +41,8 @@ jobs:
       # Export step output as job output
       AUTH_KEY: ${{ steps.generate-key.outputs.AUTH_KEY }}
       
-  # Authenticate tailscale against private deployment network
-  # using previously created auth key
-  authenticate-to-private-network:
-    runs-on: ubuntu-latest
-    
-  # Now that we are connected to private network
-  # we can deploy our infrastructure with terraform
+
+  # Deploy infrastructure and code
   deploy:
     name: "Deploy with Terraform"
     needs: generate-tailscale-authkey

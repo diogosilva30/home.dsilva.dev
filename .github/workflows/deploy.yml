@@ -20,8 +20,8 @@ jobs:
           ACCESS_TOKEN=$(curl -d "client_id=${CLIENT_ID}" -d "client_secret=${CLIENT_SECRET}" "https://api.tailscale.com/api/v2/oauth/token" | jq -r '.access_token')
           # Then create a one-off auth key via API with the access token we previously created
           AUTH_KEY=$(curl --location 'https://api.tailscale.com/api/v2/tailnet/-/keys' \
-            --header 'Authorization: Bearer ${ACCESS_TOKEN}' \
-            --header 'Content-Type: application/json' \
+            --header "Authorization: Bearer ${ACCESS_TOKEN}" \
+            --header "Content-Type: application/json" \
             --data '{
               "capabilities": {
                 "devices": {

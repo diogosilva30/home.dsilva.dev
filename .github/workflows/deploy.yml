@@ -32,7 +32,7 @@ jobs:
                 }
               },
               "expirySeconds": 120}' \
-              | jq -r '.[0].key')
+              | jq -r ".key")
           
           # Save the auth key
           echo "::set-output name=authkey::$AUTH_KEY"

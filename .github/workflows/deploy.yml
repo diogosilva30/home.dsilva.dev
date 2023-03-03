@@ -61,9 +61,7 @@ jobs:
         run: sudo tailscale up --auth-key $TAILSCALE_AUTH_KEY --accept-routes
       - name: Tailscale status
         run: tailscale status
-      
-      - name: Check Proxmox connectivity
-        run: ping 192.168.1.200
+
         # Checkout repository code
       - name: Checkout
         uses: actions/checkout@v3

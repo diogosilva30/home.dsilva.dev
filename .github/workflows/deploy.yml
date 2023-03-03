@@ -15,6 +15,7 @@ jobs:
       CLIENT_SECRET: ${{ secrets.TAILSCALE_OAUTH_CLIENT_SECRET }}
     steps:
       - name: Generate Tailscale Auth Key
+        id: generate-key
         run: |
           # Generate access token with Oauth2 client
           ACCESS_TOKEN=$(curl -s -d "client_id=${CLIENT_ID}" -d "client_secret=${CLIENT_SECRET}" "https://api.tailscale.com/api/v2/oauth/token" | jq -r '.access_token')
@@ -34,10 +35,12 @@ jobs:
               "expirySeconds": 120}' \
               | jq -r ".key")
           
-          # Save the auth key
+          # Save the auth key as step output
           echo "AUTH_KEY=$AUTH_KEY" >> $GITHUB_OUTPUT
-          cat $GITHUB_OUTPUT
-  
+    outputs:
+      # Export step output as job output
+      AUTH_KEY: ${{ steps.generate-key.outputs.AUTH_KEY }}
+      
   # Authenticate tailscale against private deployment network
   # using previously created auth key
   authenticate-to-private-network:

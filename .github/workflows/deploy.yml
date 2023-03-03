@@ -35,7 +35,7 @@ jobs:
               | jq -r ".key")
           
           # Save the auth key
-          echo "::set-output name=authkey::$AUTH_KEY"
+          echo "::set-output name=auth_key::$AUTH_KEY"
   
   # Authenticate tailscale against private deployment network
   # using previously created auth key
@@ -47,11 +47,13 @@ jobs:
       TAILSCALE_AUTH_KEY: ${{ needs.job1.outputs.auth_key  }}
       TAILSCALE_UPGRADE: "1"
     steps:
-      - name: Authenticate to Private Network
-        uses: tailscale/github-action@v1
-        with:
-          authkey: ${{ env.TAILSCALE_AUTH_KEY }}
-
+      - name: Install tailscale
+        run: curl -fsSL https://tailscale.com/install.sh | sh
+      - name: Start Tailscale
+        run: sudo tailscale up --authkey $TAILSCALE_AUTH_KEY
+      - name: Tailscale status
+        run: tailscale status
+        
   # Now that we are connected to private network
   # we can deploy our infrastructure with terraform
   build-infra-with-terraform:

@@ -58,7 +58,7 @@ jobs:
       - name: Install tailscale
         run: curl -fsSL https://tailscale.com/install.sh | sh
       - name: Start Tailscale
-        run: sudo tailscale up --auth-key $TAILSCALE_AUTH_KEY
+        run: sudo tailscale up --auth-key $TAILSCALE_AUTH_KEY --accept-routes
       - name: Tailscale status
         run: tailscale status
       

@@ -67,6 +67,8 @@ jobs:
     permissions:
       pull-requests: write
     steps:
+      - name: Debug proxmox
+        run: ping 192.168.1.200
       # Checkout repository code
       - name: Checkout
         uses: actions/checkout@v3

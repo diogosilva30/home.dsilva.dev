@@ -1,4 +1,4 @@
-name: "Terraform"
+name: "Deploy"
 on:
   push:
     branches:

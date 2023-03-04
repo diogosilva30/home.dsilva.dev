@@ -47,7 +47,7 @@ resource "proxmox_vm_qemu" "home_assistant" {
     type    = "virtio"
     size    = var.disk_size
   }
-  os_type = "cloud-init"
+  os_type    = "cloud-init"
   ipconfig0  = "ip=dhcp"
   nameserver = var.nameserver
   ciuser     = var.ciuser
@@ -64,7 +64,7 @@ resource "proxmox_vm_qemu" "home_assistant" {
       type        = "ssh"
       user        = var.ciuser
       private_key = var.ssh_private_key
-      host        = "${self.ipv4_address}"
+      host        = self.ipv4_address
     }
   }
 }

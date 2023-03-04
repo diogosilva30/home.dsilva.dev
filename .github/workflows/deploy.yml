@@ -53,6 +53,7 @@ jobs:
       # Get auth key from previous job
       TAILSCALE_AUTH_KEY: ${{ needs.generate-tailscale-authkey.outputs.AUTH_KEY }}
       TAILSCALE_UPGRADE: "1"
+      DEPLOYMENT_PATH: "/opt/homeassistant/"
     steps:
       # Connect to private network with tailscale
       - name: Install tailscale
@@ -133,3 +134,15 @@ jobs:
           TF_VAR_ciuser: ${{ secrets.CI_USER }}
           TF_VAR_ipconfig0: ip=192.168.1.45/24,gw=192.168.1.1
           TF_VAR_ssh_keys: ${{ secrets.SSH_KEY }}
+          TV_VAR_deployment_path: ${DEPLOYMENT_PATH}
+
+      - name: Set up SSH environment
+        run: |
+          mkdir -p ~/.ssh
+          echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H $(terraform -chdir=terraform output ip_address) >> ~/.ssh/known_hosts
+
+      # Sync home assistants folder with rsync 
+      - name: Connect SSH and sync home assistant folder
+        run: rsync -avz -e "ssh -i ssh_key -o 'StrictHostKeyChecking=no'" ./homeassistant user@${{ terraform -chdir=terraform output ip_address }}:${DEPLOYMENT_PATH}

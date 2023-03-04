@@ -25,17 +25,21 @@ provider "proxmox" {
   }
 }
 
+# Define a function to extract the IP address from the ipconfig0 variable
+locals {
+  ip_address = substr(element(split(",", var.ipconfig0), 0), 3, 12)
+}
+
 resource "proxmox_vm_qemu" "home_assistant" {
   name        = "home-assistant"
   desc        = "Home assistant VM"
   target_node = "proxmox"
   agent       = 1
-
-  clone   = "ubuntu-server-22"
-  cores   = 2
-  sockets = 1
-  cpu     = "host"
-  memory  = var.memory
+  clone       = "ubuntu-server-22"
+  cores       = var.cores
+  sockets     = 1
+  cpu         = "host"
+  memory      = var.memory
 
   network {
     bridge = "vmbr0"
@@ -54,5 +58,19 @@ resource "proxmox_vm_qemu" "home_assistant" {
   ciuser     = var.ciuser
   sshkeys    = var.ssh_keys
 
+  # Setup deployment folder
+  provisioner "remote-exec" {
+    inline = [
+      # Give permissions on deployment folder to CI user
+      "sudo mkdir -p ${var.deployment_path}",
+      "sudo chown -R ${var.ciuser}:${var.ciuser} ${deployment_path}",
+    ]
+    connection {
+      type        = "ssh"
+      user        = var.ciuser
+      private_key = var.ssh_private_key
+      host        = local.ip_address
+    }
+  }
 }
 

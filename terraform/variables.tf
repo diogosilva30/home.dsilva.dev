@@ -27,7 +27,7 @@ variable "ssh_keys" {
 }
 variable "ssh_private_key" {
   description = "The private SSH key for terraform to SSH into the machine"
-  sensitive   = false
+  sensitive   = true
   type        = string
 }
 variable "nameserver" {

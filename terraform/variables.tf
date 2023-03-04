@@ -47,11 +47,11 @@ variable "memory" {
 }
 variable "cores" {
   description = "The number of CPU cores of the VM"
-  type= number
-  default = 2
+  type        = number
+  default     = 2
 }
 variable "deployment_path" {
   description = "The folder that should be created inside the VM for deployment. The CI user is granted write permissions on this folder"
-  type = string
+  type        = string
 }
 

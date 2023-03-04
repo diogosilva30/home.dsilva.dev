@@ -8,13 +8,6 @@ terraform {
       version = "2.9.3"
     }
   }
-  cloud {
-    organization = "dsilva"
-
-    workspaces {
-      name = "home-dsilva-dev"
-    }
-  }
 }
 
 
@@ -32,10 +25,6 @@ provider "proxmox" {
   }
 }
 
-# Define a function to extract the IP address from the ipconfig0 variable
-locals {
-  ip_address = substr(element(split(",", var.ipconfig0), 0), 3, 12)
-}
 
 resource "proxmox_vm_qemu" "home_assistant" {
   name        = "home-assistant"
@@ -59,8 +48,7 @@ resource "proxmox_vm_qemu" "home_assistant" {
     size    = var.disk_size
   }
   os_type = "cloud-init"
-  # Use the ipconfig0 variable to set the IP configuration
-  ipconfig0  = var.ipconfig0
+  ipconfig0  = "ip=dhcp"
   nameserver = var.nameserver
   ciuser     = var.ciuser
   sshkeys    = var.ssh_keys
@@ -76,7 +64,7 @@ resource "proxmox_vm_qemu" "home_assistant" {
       type        = "ssh"
       user        = var.ciuser
       private_key = var.ssh_private_key
-      host        = local.ip_address
+      host        = "${self.ipv4_address}"
     }
   }
 }

@@ -8,6 +8,13 @@ terraform {
       version = "2.9.3"
     }
   }
+  cloud {
+    organization = "dsilva"
+
+    workspaces {
+      name = "home-dsilva-dev"
+    }
+  }
 }
 
 

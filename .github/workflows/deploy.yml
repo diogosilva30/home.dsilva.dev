@@ -126,7 +126,8 @@ jobs:
       # Deploy with terraform on pushes to main branch
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform -chdir=terraform apply -auto-approve -input=false
+        run: echo ${{ env.DEPLOYMENT_PATH }}
+        #run: terraform -chdir=terraform apply -auto-approve -input=false
         env:
           TF_VAR_proxmox_api_url: ${{ secrets.PROXMOX_API_URL }}
           TF_VAR_proxmox_api_token_id: ${{ secrets.PROXMOX_API_TOKEN_ID }}

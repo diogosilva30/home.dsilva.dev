@@ -69,9 +69,6 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
-        with:
-          # Authenticate with terraform cloud
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
         
       - name: Terraform Format
         id: fmt
@@ -135,7 +132,6 @@ jobs:
           TF_VAR_proxmox_api_token_id: ${{ secrets.PROXMOX_API_TOKEN_ID }}
           TF_VAR_proxmox_api_token_secret: ${{ secrets.PROXMOX_API_TOKEN_SECRET }}
           TF_VAR_ciuser: ${{ secrets.CI_USER }}
-          TF_VAR_ipconfig0: ip=192.168.1.45/24,gw=192.168.1.1
           TF_VAR_ssh_keys: ${{ secrets.SSH_KEY }}
           TF_VAR_ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           TF_VAR_deployment_path: ${{ env.DEPLOYMENT_PATH }}

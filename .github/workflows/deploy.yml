@@ -148,4 +148,5 @@ jobs:
       - name: Connect SSH and sync home assistant folder
         run: |
           IP_ADDRESS=$(terraform -chdir=terraform output ip_address)
-          rsync -avz -e "ssh -i ssh_key -o 'StrictHostKeyChecking=no'" ./homeassistant ${{ secrets.CI_USER }}@${IP_ADDRESS}:${DEPLOYMENT_PATH}
+          echo ${IP_ADDRESS}:${DEPLOYMENT_PATH}
+          rsync -avz -e "ssh -i ssh_key -o 'StrictHostKeyChecking=no'" "./homeassistant" "${{ secrets.CI_USER }}@${IP_ADDRESS}:${DEPLOYMENT_PATH}"

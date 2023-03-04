@@ -122,12 +122,13 @@ jobs:
       - name: Terraform Plan Status
         if: steps.plan.outcome == 'failure'
         run: exit 1
-
+      
+      - name: debug var
+        run: echo ${{ env.DEPLOYMENT_PATH }}
       # Deploy with terraform on pushes to main branch
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: echo ${{ env.DEPLOYMENT_PATH }}
-        #run: terraform -chdir=terraform apply -auto-approve -input=false
+        run: terraform -chdir=terraform apply -auto-approve -input=false
         env:
           TF_VAR_proxmox_api_url: ${{ secrets.PROXMOX_API_URL }}
           TF_VAR_proxmox_api_token_id: ${{ secrets.PROXMOX_API_TOKEN_ID }}
@@ -135,7 +136,6 @@ jobs:
           TF_VAR_ciuser: ${{ secrets.CI_USER }}
           TF_VAR_ipconfig0: ip=192.168.1.45/24,gw=192.168.1.1
           TF_VAR_ssh_keys: ${{ secrets.SSH_KEY }}
-          TV_VAR_deployment_path: ${{ env.DEPLOYMENT_PATH }}
           TV_VAR_ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Set up SSH environment

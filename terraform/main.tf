@@ -63,7 +63,7 @@ resource "proxmox_vm_qemu" "home_assistant" {
     inline = [
       # Give permissions on deployment folder to CI user
       "sudo mkdir -p ${var.deployment_path}",
-      "sudo chown -R ${var.ciuser}:${var.ciuser} ${deployment_path}",
+      "sudo chown -R ${var.ciuser}:${var.ciuser} ${var.deployment_path}",
     ]
     connection {
       type        = "ssh"

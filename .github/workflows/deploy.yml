@@ -54,6 +54,9 @@ jobs:
       TAILSCALE_AUTH_KEY: ${{ needs.generate-tailscale-authkey.outputs.AUTH_KEY }}
       TAILSCALE_UPGRADE: "1"
       DEPLOYMENT_PATH: "/opt/homeassistant/"
+      # Configuration for S3 backend (automatically read by Terraform)
+      AWS_ACCESS_KEY_ID : ${{ secrets.S3_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_ACCESS_KEY }}
     steps:
       # Connect to private network with tailscale
       - name: Install tailscale
@@ -140,9 +143,6 @@ jobs:
           TF_VAR_ssh_keys: ${{ secrets.SSH_KEY }}
           TF_VAR_ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           TF_VAR_deployment_path: ${{ env.DEPLOYMENT_PATH }}
-          # Configuration for S3 backend
-          AWS_ACCESS_KEY_ID : ${{ secrets.S3_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_ACCESS_KEY }}
 
       # Sync folders and deploy
       - name: Connect SSH / Sync Home Assistant folder / Deploy with docker compose

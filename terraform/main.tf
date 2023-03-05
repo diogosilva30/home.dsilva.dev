@@ -127,7 +127,8 @@ resource "proxmox_vm_qemu" "home_assistant" {
   }
   # Generate the tunnel configuration file for ansible
   depends_on = [
-    local_file.tunnel_config
+    local_file.tunnel_config,
+    local_file.vars_file
   ]
 }
 

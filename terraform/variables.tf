@@ -12,11 +12,6 @@ variable "proxmox_api_token_secret" {
   type      = string
   sensitive = true
 }
-variable "ipconfig0" {
-  description = "The IP configuration for network interface 0"
-  type        = string
-}
-
 variable "ciuser" {
   description = "The name of the default user that should be created"
   type        = string

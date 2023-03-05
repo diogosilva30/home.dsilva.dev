@@ -53,7 +53,7 @@ resource "random_id" "tunnel_secret" {
 # Creates a new locally-managed tunnel for the VM.
 resource "cloudflare_tunnel" "tunnel" {
   account_id = var.cloudflare_account_id
-  name       = "s3"
+  name       = "homeassistant"
   secret     = random_id.tunnel_secret.b64_std
 }
 
@@ -126,6 +126,7 @@ resource "proxmox_vm_qemu" "home_assistant" {
     EOT
   }
   # Generate the tunnel configuration file for ansible
+  # and the ansible vars file
   depends_on = [
     local_file.tunnel_config,
     local_file.vars_file

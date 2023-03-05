@@ -14,7 +14,7 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
-      - "812:8123" # The port for home assistant
+      - "8123:8123" # The port for home assistant
     depends_on:
       - homeassistant
 

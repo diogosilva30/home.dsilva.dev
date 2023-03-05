@@ -5,12 +5,12 @@ Welcome to my open-source repository for my Home Assistant deployment! I've buil
 🛠️ Tools and Technologies
 Here are the tools and technologies I've used to build this project:
 
-- Docker 🐳 - efficient and scalable deployment
+- Docker 🐳 - efficient and scalable deployment.
 - Terraform 🏗️ - infrastructure management and provisioning on my Proxmox datacenter, with Terraform state being securely stored on a on-premises S3 server.
-- Ansible 🤖 - automating the installation and configuration of software on the infrastructure
-- Cloudflare Tunnel 🔒 - secure and remote access to Home Assistant instance from anywhere
-- Tailscale VPN 🌐 - easy and secure authentication to private network
-- GitHub Pipelines 🚦 - automated testing and deployment
+- Ansible 🤖 - automating the installation and configuration of software on the infrastructure.
+- Cloudflare Tunnel 🔒 - secure and remote access to Home Assistant instance from anywhere.
+- Tailscale VPN 🌐 - easy and secure authentication of GitHub's runner to my private network.
+- GitHub Pipelines 🚦 - automated testing and deployment.
 
 
 ## 🔒 Cloudflare Tunnel Automation

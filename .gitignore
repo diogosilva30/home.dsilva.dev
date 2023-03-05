@@ -1,6 +1,5 @@
 # Created by https://www.toptal.com/developers/gitignore/api/homeassistant,macos,python,terraform
 # Edit at https://www.toptal.com/developers/gitignore?templates=homeassistant,macos,python,terraform
-config
 ### HomeAssistant ###
 # Files with personal details
 *.crt

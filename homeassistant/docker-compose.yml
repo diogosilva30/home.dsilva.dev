@@ -4,18 +4,10 @@ services:
     container_name: homeassistant
     image: "ghcr.io/home-assistant/home-assistant:stable"
     volumes:
-      - /.config:/config
+      - ./config:/config
       - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
-
-  nginx:
-    image: nginx:1.19.2-alpine
-    hostname: nginx
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
-      - "8123:8123" # The port for home assistant
-    depends_on:
-      - homeassistant
-
+      - "8123:8123"
+      
     

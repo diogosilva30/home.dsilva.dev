@@ -60,7 +60,7 @@ resource "cloudflare_tunnel" "tunnel" {
 # Creates the CNAME record for the tunnel
 resource "cloudflare_record" "homeassistant" {
   zone_id = var.cloudflare_zone_id
-  name    = "${var.hostname}"
+  name    = var.hostname
   value   = "${cloudflare_tunnel.tunnel.id}.cfargotunnel.com"
   type    = "CNAME"
   proxied = true

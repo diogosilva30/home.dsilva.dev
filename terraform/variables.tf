@@ -49,4 +49,32 @@ variable "deployment_path" {
   description = "The folder that should be created inside the VM for deployment. The CI user is granted write permissions on this folder"
   type        = string
 }
+variable "hostname" {
+  description = "The hostname for the cloudflared tunnel (e.g. home.yourdomain.com)"
+  type        = string
+}
+# Cloudflare variables
+variable "cloudflare_zone_id" {
+  description = "Zone ID for your domain"
+  type        = string
+}
+
+variable "cloudflare_account_id" {
+  description = "Account ID for your Cloudflare account"
+  type        = string
+  sensitive   = true
+}
+
+variable "cloudflare_email" {
+  description = "Email address for your Cloudflare account"
+  type        = string
+  sensitive   = true
+}
+
+variable "cloudflare_token" {
+  description = "Cloudflare API token created at https://dash.cloudflare.com/profile/api-tokens"
+  type        = string
+}
+
+
 

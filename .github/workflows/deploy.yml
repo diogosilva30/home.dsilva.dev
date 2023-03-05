@@ -54,6 +54,7 @@ jobs:
       TAILSCALE_AUTH_KEY: ${{ needs.generate-tailscale-authkey.outputs.AUTH_KEY }}
       TAILSCALE_UPGRADE: "1"
       DEPLOYMENT_PATH: "/opt/homeassistant/"
+      HOSTNAME: "home.dsilva.dev"
       # Configuration for S3 backend (automatically read by Terraform)
       AWS_ACCESS_KEY_ID : ${{ secrets.S3_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_ACCESS_KEY }}
@@ -144,6 +145,12 @@ jobs:
           TF_VAR_ssh_keys: ${{ secrets.SSH_KEY }}
           TF_VAR_ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           TF_VAR_deployment_path: ${{ env.DEPLOYMENT_PATH }}
+          TV_VAR_hostname: ${{ env.HOSTNAME }}
+          # Cloudflare variables
+          TF_VAR_cloudflare_zone_id: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+          TF_VAR_cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          TF_VAR_cloudflare_email: ${{ secrets.CLOUDFLARE_EMAIL }}
+          TF_VAR_cloudflare_token: ${{ secrets.CLOUDFLARE_TOKEN }}
 
       # Sync folders and deploy
       - name: Connect SSH / Sync Home Assistant folder / Deploy with docker compose

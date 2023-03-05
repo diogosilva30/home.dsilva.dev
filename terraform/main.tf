@@ -17,10 +17,20 @@ terraform {
       source  = "telmate/proxmox"
       version = "2.9.3"
     }
+    cloudflare = {
+      source = "cloudflare/cloudflare"
+    }
+    random = {
+      source = "hashicorp/random"
+    }
   }
 }
 
-
+# Providers
+provider "cloudflare" {
+  api_token = var.cloudflare_token
+}
+provider "random" {}
 provider "proxmox" {
   pm_api_url          = var.proxmox_api_url
   pm_api_token_id     = var.proxmox_api_token_id
@@ -33,6 +43,27 @@ provider "proxmox" {
     _default    = "debug"
     _capturelog = ""
   }
+}
+
+# Generates a 35-character secret for the tunnel.
+resource "random_id" "tunnel_secret" {
+  byte_length = 35
+}
+
+# Creates a new locally-managed tunnel for the VM.
+resource "cloudflare_tunnel" "tunnel" {
+  account_id = var.cloudflare_account_id
+  name       = "s3"
+  secret     = random_id.tunnel_secret.b64_std
+}
+
+# Creates the CNAME record for the tunnel
+resource "cloudflare_record" "homeassistant" {
+  zone_id = var.cloudflare_zone_id
+  name    = "${var.hostname}"
+  value   = "${cloudflare_tunnel.tunnel.id}.cfargotunnel.com"
+  type    = "CNAME"
+  proxied = true
 }
 
 
@@ -81,7 +112,22 @@ resource "proxmox_vm_qemu" "home_assistant" {
       "sudo mkdir -p ${var.deployment_path}",
       "sudo chown -R ${var.ciuser}:${var.ciuser} ${var.deployment_path}",
     ]
-
   }
+  provisioner "local-exec" {
+    # Execute the ansible playbook on the VM
+    # to create the cloudflare tunnel 
+    command = <<-EOT
+    echo "${self.ssh_private_key}" > privkey
+    sudo chmod 600 privkey
+    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook \
+    -u ${self.ssh_user} \
+    --private-key privkey \
+    -i ${self.ssh_host}, ../ansible/install_tunel.yml
+    EOT
+  }
+  # Generate the tunnel configuration file for ansible
+  depends_on = [
+    local_file.tunnel_config
+  ]
 }
 

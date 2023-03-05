@@ -1,6 +1,16 @@
 terraform {
   required_version = ">= 0.13.0"
 
+  backend "s3" {
+    bucket                      = "terraform-states"
+    key                         = "home-dsilva-dev.tfstate"
+    endpoint                    = "https://s3-api.dsilva.dev"
+    force_path_style            = true
+    region                      = "eu-south-2"
+    skip_region_validation      = true
+    skip_credentials_validation = true
+    skip_metadata_api_check     = true
+  }
   required_providers {
     # https://github.com/Telmate/terraform-provider-proxmox
     proxmox = {
@@ -47,11 +57,22 @@ resource "proxmox_vm_qemu" "home_assistant" {
     type    = "virtio"
     size    = var.disk_size
   }
-  os_type    = "cloud-init"
-  ipconfig0  = "ip=dhcp"
-  nameserver = var.nameserver
-  ciuser     = var.ciuser
-  sshkeys    = var.ssh_keys
+  os_type         = "cloud-init"
+  ipconfig0       = "ip=dhcp"
+  nameserver      = var.nameserver
+  ciuser          = var.ciuser
+  sshkeys         = var.ssh_keys
+  ssh_private_key = var.ssh_private_key
+  ssh_user        = var.ciuser
+
+  connection {
+    type        = "ssh"
+    host        = self.ssh_host # Auto-assigned ip address
+    user        = self.ssh_user
+    private_key = self.ssh_private_key
+    port        = self.ssh_port
+  }
+
 
   # Setup deployment folder
   provisioner "remote-exec" {
@@ -60,12 +81,7 @@ resource "proxmox_vm_qemu" "home_assistant" {
       "sudo mkdir -p ${var.deployment_path}",
       "sudo chown -R ${var.ciuser}:${var.ciuser} ${var.deployment_path}",
     ]
-    connection {
-      type        = "ssh"
-      user        = var.ciuser
-      private_key = var.ssh_private_key
-      host        = self.ipv4_address
-    }
+
   }
 }
 

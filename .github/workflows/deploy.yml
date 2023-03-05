@@ -69,6 +69,8 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_wrapper: false
         
       - name: Terraform Format
         id: fmt
@@ -126,7 +128,10 @@ jobs:
       # Deploy with terraform on pushes to main branch
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform -chdir=terraform apply -auto-approve -input=false
+        run: |
+          terraform -chdir=terraform apply -auto-approve -input=false
+          # Save the VM ip as step output
+          echo "IP_ADDRESS=$(terraform -chdir=terraform output -raw ip_address)" >> $GITHUB_OUTPUT
         env:
           TF_VAR_proxmox_api_url: ${{ secrets.PROXMOX_API_URL }}
           TF_VAR_proxmox_api_token_id: ${{ secrets.PROXMOX_API_TOKEN_ID }}
@@ -135,17 +140,22 @@ jobs:
           TF_VAR_ssh_keys: ${{ secrets.SSH_KEY }}
           TF_VAR_ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           TF_VAR_deployment_path: ${{ env.DEPLOYMENT_PATH }}
+          # Configuration for S3 backend
+          AWS_ACCESS_KEY_ID : ${{ S3_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ S3_SECRET_ACCESS_KEY }}
 
-      - name: Set up SSH environment
+      # Sync folders and deploy
+      - name: Connect SSH / Sync Home Assistant folder / Deploy with docker compose
+        env:
+          HOST: ${{ steps.terraform-apply.outputs.IP_ADDRESS }}
+          USER: ${{ secrets.CI_USER }}
+          PRIVKEY: ${{ secrets.SSH_PRIVATE_KEY}}
         run: |
+          eval $(ssh-agent -s)
           mkdir -p ~/.ssh
-          echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
+          echo "${PRIVKEY}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H $(terraform -chdir=terraform output ip_address) >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${HOST} >> ~/.ssh/known_hosts
+          rsync -avz -e "ssh -o 'StrictHostKeyChecking=no'" "./homeassistant/" "${USER}@${HOST}:${DEPLOYMENT_PATH}"
+          ssh ${USER}@${HOST} -T "cd ${DEPLOYMENT_PATH} && sudo docker compose up --build -d"
 
-      # Sync home assistants folder with rsync 
-      - name: Connect SSH and sync home assistant folder
-        run: |
-          IP_ADDRESS=$(terraform -chdir=terraform output ip_address)
-          echo ${IP_ADDRESS}:${DEPLOYMENT_PATH}
-          rsync -avz -e "ssh -i ssh_key -o 'StrictHostKeyChecking=no'" "./homeassistant" "${{ secrets.CI_USER }}@${IP_ADDRESS}:${DEPLOYMENT_PATH}"

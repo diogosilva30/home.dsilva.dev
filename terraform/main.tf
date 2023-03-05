@@ -122,7 +122,7 @@ resource "proxmox_vm_qemu" "home_assistant" {
     ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook \
     -u ${self.ssh_user} \
     --private-key privkey \
-    -i ${self.ssh_host}, ../ansible/install_tunel.yml
+    -i ${self.ssh_host}, ../ansible/install_tunnel.yml
     EOT
   }
   # Generate the tunnel configuration file for ansible

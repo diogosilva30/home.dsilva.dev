@@ -1,4 +1,4 @@
-🏡 home.dsilva.dev
+🏡 # home.dsilva.dev
 
 Welcome to my open-source repository for my Home Assistant deployment! I've built this project to showcase my expertise in deploying Home Assistant on a self-hosted server using the latest tools and technologies. 🚀
 

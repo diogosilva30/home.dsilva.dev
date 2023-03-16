@@ -279,3 +279,6 @@ terraform.rc
 
 # End of https://www.toptal.com/developers/gitignore/api/homeassistant,macos,python,terraform
 .terraform.lock.hcl
+terraform/privkey
+vars_file.yml
+tunnel_config.yml

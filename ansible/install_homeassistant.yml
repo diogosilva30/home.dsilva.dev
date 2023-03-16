@@ -1,0 +1,37 @@
+- hosts: all
+  become: true
+  # Playbook based on https://github.com/home-assistant/supervised-installer
+  tasks:
+    - name: Install required packages
+      apt:
+        name:
+          - apparmor
+          - jq
+          - wget
+          - curl
+          - udisks2
+          - libglib2.0-bin
+          - network-manager
+          - dbus
+          - lsb-release
+          - systemd-journal-remote
+        state: present
+
+    - name: Install Docker
+      shell: >
+        curl -fsSL get.docker.com | sh
+
+    - name: Add user to Docker group
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+
+    - name: Download OS Agent
+      shell: |
+        wget https://github.com/home-assistant/os-agent/releases/download/1.5.1/os-agent_1.5.1_linux_x86_64.deb
+        dpkg -i os-agent_1.5.1_linux_x86_64.deb
+
+    - name: Install the Home Assistant Supervised Debian Package
+      shell: |
+        wget https://github.com/home-assistant/supervised-installer/releases/latest/download/homeassistant-supervised.deb
+        apt install ./homeassistant-supervised.deb

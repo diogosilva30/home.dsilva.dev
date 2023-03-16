@@ -45,10 +45,7 @@ variable "cores" {
   type        = number
   default     = 2
 }
-variable "deployment_path" {
-  description = "The folder that should be created inside the VM for deployment. The CI user is granted write permissions on this folder"
-  type        = string
-}
+
 variable "hostname" {
   description = "The hostname for the cloudflared tunnel (e.g. home.yourdomain.com)"
   type        = string

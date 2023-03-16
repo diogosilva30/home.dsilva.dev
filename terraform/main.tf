@@ -72,7 +72,7 @@ resource "proxmox_vm_qemu" "home_assistant" {
   desc        = "Home assistant VM"
   target_node = "proxmox"
   agent       = 1
-  clone       = "ubuntu-server-22"
+  clone       = "debian11-bullseye"
   cores       = var.cores
   sockets     = 1
   cpu         = "host"
@@ -105,24 +105,30 @@ resource "proxmox_vm_qemu" "home_assistant" {
   }
 
 
-  # Setup deployment folder
-  provisioner "remote-exec" {
-    inline = [
-      # Give permissions on deployment folder to CI user
-      "sudo mkdir -p ${var.deployment_path}",
-      "sudo chown -R ${var.ciuser}:${var.ciuser} ${var.deployment_path}",
-    ]
-  }
   provisioner "local-exec" {
-    # Execute the ansible playbook on the VM
-    # to create the cloudflare tunnel 
+    # Create the private key for ansible connection,
+    # and install ansible
     command = <<-EOT
     echo "${self.ssh_private_key}" > privkey
-    sudo chmod 600 privkey
+    chmod 600 privkey
+    EOT
+  }
+  # Install cloudflare tunnel with ansible playbook
+  provisioner "local-exec" {
+    command = <<-EOT
     ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook \
     -u ${self.ssh_user} \
     --private-key privkey \
     -i ${self.ssh_host}, ../ansible/install_tunnel.yml
+    EOT
+  }
+  # Install home assistant supervised with ansible playbook
+  provisioner "local-exec" {
+    command = <<-EOT
+    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook \
+    -u ${self.ssh_user} \
+    --private-key privkey \
+    -i ${self.ssh_host}, ../ansible/install_homeassistant.yml
     EOT
   }
   # Generate the tunnel configuration file for ansible

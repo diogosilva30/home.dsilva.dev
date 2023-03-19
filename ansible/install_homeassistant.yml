@@ -21,6 +21,29 @@
       shell: >
         curl -fsSL get.docker.com | sh
 
+    - name: Add unified cgroup hierarchy parameter to GRUB
+      become: true
+      lineinfile:
+        dest: /etc/default/grub
+        regexp: "^GRUB_CMDLINE_LINUX=.*"
+        line: 'GRUB_CMDLINE_LINUX="systemd.unified_cgroup_hierarchy=0"'
+
+    - name: Update GRUB
+      become: true
+      command: update-grub
+
+    - name: Reboot the target machine
+      become: true
+      reboot:
+      async: 1
+      poll: 0
+      ignore_errors: true
+
+    - name: Wait for the target machine to come back online
+      become: true
+      wait_for_connection:
+        timeout: 300
+
     - name: Add user to Docker group
       user:
         name: "{{ ansible_user }}"
@@ -35,3 +58,23 @@
       shell: |
         wget https://github.com/home-assistant/supervised-installer/releases/latest/download/homeassistant-supervised.deb
         apt install ./homeassistant-supervised.deb
+
+    - name: Create home assistant directory
+      file:
+        path: /usr/share/hassio/homeassistant/
+        state: directory
+        owner: root
+
+    - name: Create empty configuration files
+      file:
+        path: "{{ item }}"
+        state: touch
+      loop:
+        - /usr/share/hassio/homeassistant/automations.yaml
+        - /usr/share/hassio/homeassistant/scripts.yaml
+        - /usr/share/hassio/homeassistant/scenes.yaml
+
+    - name: Copy Home Assistant configuration
+      copy:
+        src: ../configuration.yaml
+        dest: /usr/share/hassio/homeassistant/configuration.yaml

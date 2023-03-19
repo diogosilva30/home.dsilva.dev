@@ -72,7 +72,7 @@ resource "proxmox_vm_qemu" "home_assistant" {
   desc        = "Home assistant VM"
   target_node = "proxmox"
   agent       = 1
-  clone       = "debian11-bullseye"
+  clone       = "debian-server-11"
   cores       = var.cores
   sockets     = 1
   cpu         = "host"
@@ -83,11 +83,13 @@ resource "proxmox_vm_qemu" "home_assistant" {
     model  = "virtio"
   }
 
+
   disk {
+    size    = "50G"
     storage = "local"
     type    = "virtio"
-    size    = var.disk_size
   }
+
   os_type         = "cloud-init"
   ipconfig0       = "ip=dhcp"
   nameserver      = var.nameserver

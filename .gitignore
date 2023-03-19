@@ -282,3 +282,4 @@ terraform.rc
 terraform/privkey
 vars_file.yml
 tunnel_config.yml
+configuration.yaml

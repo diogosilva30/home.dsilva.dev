@@ -71,6 +71,7 @@ resource "proxmox_vm_qemu" "home_assistant" {
   name        = "home-assistant"
   desc        = "Home assistant VM"
   target_node = "proxmox"
+  onboot      = true
   agent       = 1
   clone       = "debian-server-11"
   cores       = var.cores
